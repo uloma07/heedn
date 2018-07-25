@@ -1,9 +1,14 @@
 package com.example.android.heedn;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.renderscript.Script;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,14 +24,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.heedn.data.ScriptureDbHelper;
+import com.example.android.heedn.dummy.Constants;
 import com.example.android.heedn.dummy.DummyContent;
 import com.example.android.heedn.models.Scripture;
+import com.example.android.heedn.utils.MyNotificationManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.example.android.heedn.dummy.Constants.COUNT;
+import static com.example.android.heedn.dummy.Constants.FIRSTTIMEKEY;
 
 /**
  * An activity representing a list of Scriptures. This activity
@@ -58,6 +68,7 @@ public class ScriptureListActivity extends AppCompatActivity {
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,17 +107,48 @@ public class ScriptureListActivity extends AppCompatActivity {
 
         dbHelper = new ScriptureDbHelper(this);
         Scripture [] sitems = dbHelper.getAllScriptures();
+        int numberofScriptures = 0;
         if(sitems != null) {
             DummyContent.SItems = Arrays.asList(sitems);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView);
             noScriptures.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            numberofScriptures = sitems.length;
         }
         else{
             noScriptures.setVisibility(View.VISIBLE);
             assert recyclerView != null;
             recyclerView.setVisibility(View.GONE);
+        }
+
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!prefs.getBoolean(FIRSTTIMEKEY, false)) {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel mChannel = new NotificationChannel(Constants.CHANNEL_ID, Constants.CHANNEL_NAME, importance);
+                mChannel.setDescription(Constants.CHANNEL_DESCRIPTION);
+                mChannel.enableLights(true);
+                mChannel.setLightColor(Color.BLUE);
+                mChannel.enableVibration(true);
+                mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                mNotificationManager.createNotificationChannel(mChannel);
+            }
+
+            /*
+             * Displaying a notification locally
+             */
+            MyNotificationManager.getInstance(this).displayNotification("Welcome", "How many scriptures have you HEEDn in your heart?");
+
+            // run your one time code
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(FIRSTTIMEKEY, true);
+            editor.putInt(COUNT, numberofScriptures);
+            editor.commit();
         }
 
 

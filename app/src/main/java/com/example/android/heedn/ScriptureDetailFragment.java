@@ -1,8 +1,12 @@
 package com.example.android.heedn;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +19,9 @@ import android.widget.TextView;
 import com.example.android.heedn.data.ScriptureDbHelper;
 import com.example.android.heedn.dummy.DummyContent;
 import com.example.android.heedn.models.Scripture;
+import com.example.android.heedn.widgets.HEEDn_widget;
+
+import static com.example.android.heedn.dummy.Constants.COUNT;
 
 /**
  * A fragment representing a single Scripture detail screen.
@@ -92,6 +99,20 @@ public class ScriptureDetailFragment extends Fragment {
                 public void onClick(View v) {
                     boolean res = new ScriptureDbHelper(c).delete(Integer.parseInt(getArguments().getString(ARG_ITEM_ID)));
                     if(res){
+
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+                        if(prefs.contains(COUNT)) {
+                            SharedPreferences.Editor editor = prefs.edit();
+                            int numberofScriptures = prefs.getInt(COUNT,1);
+                            editor.putInt(COUNT, numberofScriptures-1);
+                            editor.commit();
+                        }
+                        else{
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putInt(COUNT, 0);
+                            editor.commit();
+                        }
+                        doWidgetUpdate(c);
                         Intent homeIntent = new Intent(c,ScriptureListActivity.class);
                         c.startActivity(homeIntent);
                     }
@@ -100,5 +121,11 @@ public class ScriptureDetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    public void doWidgetUpdate(Context c){
+        AppWidgetManager widgetManager = AppWidgetManager.getInstance(c);
+        int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(c, HEEDn_widget.class));
+        HEEDn_widget.updateHEEDnWidgets(c, widgetManager, appWidgetIds);
     }
 }

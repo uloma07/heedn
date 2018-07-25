@@ -1,7 +1,11 @@
 package com.example.android.heedn;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +21,12 @@ import com.example.android.heedn.data.ScriptureDbHelper;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.utils.JSONUtils;
 import com.example.android.heedn.utils.NetworkUtils;
+import com.example.android.heedn.widgets.HEEDn_widget;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static com.example.android.heedn.dummy.Constants.COUNT;
 
 public class AddScriptureActivity extends AppCompatActivity {
 
@@ -121,6 +128,22 @@ public class AddScriptureActivity extends AppCompatActivity {
     public void Add(View view) {
         long id = dbHelper.addNewScripture(scripturetext);
         if(id> 0){
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if(prefs.contains(COUNT)) {
+
+                SharedPreferences.Editor editor = prefs.edit();
+                int numberofScriptures = prefs.getInt(COUNT, 0);
+                editor.putInt(COUNT, numberofScriptures+1);
+                editor.commit();
+            }
+            else{
+
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt(COUNT, 1);
+                editor.commit();
+            }
+            doWidgetUpdate();
             Intent homeIntent = new Intent(this,ScriptureListActivity.class);
             this.startActivity(homeIntent);
         }
@@ -156,5 +179,11 @@ public class AddScriptureActivity extends AppCompatActivity {
                 ShowSnackbar("This Scripture was not found! Please check reference and retry.");
             }
         }
+    }
+
+    public void doWidgetUpdate(){
+        AppWidgetManager widgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(this, HEEDn_widget.class));
+        HEEDn_widget.updateHEEDnWidgets(this, widgetManager, appWidgetIds);
     }
 }

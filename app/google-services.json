@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "29793640841",
+    "firebase_url": "https://heedn-9f640.firebaseio.com",
+    "project_id": "heedn-9f640",
+    "storage_bucket": "heedn-9f640.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29793640841:android:2e1be1d92be81837",
+        "android_client_info": {
+          "package_name": "com.example.android.heedn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29793640841-0mrhfu2og8u2o12h6flqo78n344ejhsn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.heedn",
+            "certificate_hash": "91f2af1ddbf82e7955e2265b7dd73ef19c2b9e2f"
+          }
+        },
+        {
+          "client_id": "29793640841-t1b9p68ds8eehg6d078fiu88ouvg2lfj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiw2ZjxnjakrNlJTqU8jt-GrASsCEBSL0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29793640841-t1b9p68ds8eehg6d078fiu88ouvg2lfj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -32,7 +32,28 @@
                 android:value="com.example.android.heedn.ScriptureListActivity" />
         </activity>
         <activity android:name=".AddScriptureActivity" />
-        <activity android:name=".ReviewScriptureActivity"></activity>
+        <activity android:name=".ReviewScriptureActivity" />
+
+        <service android:name=".services.MyFireBaseService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".widgets.HEEDn_widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/heedn_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
