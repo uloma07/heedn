@@ -109,6 +109,11 @@ public class ScriptureDbHelper extends SQLiteOpenHelper {
         return s_array;
     }
 
+    public Cursor getAllScripturesCursor() {
+        Cursor cursor = mDb.rawQuery("select * from " + ScriptureContract.ScriptureEntry.TABLE_NAME  , null);
+        return cursor;
+    }
+
     public boolean delete(long id)
     {
         return mDb.delete(ScriptureContract.ScriptureEntry.TABLE_NAME, ScriptureContract.ScriptureEntry._ID + "=" + id, null) > 0;

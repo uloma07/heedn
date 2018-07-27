@@ -103,7 +103,6 @@ public class ScriptureDetailFragment extends Fragment {
                 }
             });
         }
-
         return rootView;
     }
 

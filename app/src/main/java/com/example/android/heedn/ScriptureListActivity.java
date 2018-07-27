@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,9 +20,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.heedn.data.ScriptureContract;
 import com.example.android.heedn.data.ScriptureDbHelper;
 import com.example.android.heedn.dummy.Constants;
 import com.example.android.heedn.models.Scripture;
+import com.example.android.heedn.utils.CursorRecyclerAdapter;
 import com.example.android.heedn.utils.MyNotificationManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -55,6 +58,11 @@ public class ScriptureListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scripture_list);
+
+        String[] uiBindFrom = { ScriptureContract.ScriptureEntry.REFERENCE,
+                ScriptureContract.ScriptureEntry._ID };
+        // View IDs which will have the respective column data inserted
+        int[] uiBindTo = { R.id.content, R.id.id_text };
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -102,15 +110,15 @@ public class ScriptureListActivity extends AppCompatActivity {
         View recyclerView = findViewById(R.id.scripture_list);
 
         dbHelper = new ScriptureDbHelper(this);
-        Scripture [] sitems = dbHelper.getAllScriptures();
+        Cursor sitems = dbHelper.getAllScripturesCursor();
         int numberofScriptures = 0;
         if(sitems != null) {
-            ScriptureListActivity.SItems = Arrays.asList(sitems);
+            //ScriptureListActivity.SItems = Arrays.asList(sitems);
             assert recyclerView != null;
-            setupRecyclerView((RecyclerView) recyclerView);
+            setupRecyclerView((RecyclerView) recyclerView,sitems,uiBindFrom,uiBindTo);
             noScriptures.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            numberofScriptures = sitems.length;
+            numberofScriptures = sitems.getCount();
         }
         else{
             noScriptures.setVisibility(View.VISIBLE);
@@ -150,16 +158,138 @@ public class ScriptureListActivity extends AppCompatActivity {
 
     }
 
-        private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        private void setupRecyclerView(@NonNull RecyclerView recyclerView, Cursor c, String[] from, int[] to ) {
             Log.v("HEEDn Content", String.valueOf(ScriptureListActivity.SItems.size()));
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ScriptureListActivity.SItems, mTwoPane));
+            recyclerView.setAdapter(new SimpleRecyclerViewAdapter(R.layout.scripture_list_content, c, from, to, this,mTwoPane));
+            //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ScriptureListActivity.SItems, mTwoPane));
     }
+
+
+
+
+    public static class SimpleRecyclerViewAdapter
+            extends CursorRecyclerAdapter<SimpleRecyclerViewAdapter.ViewHolder> {
+
+        private int mLayout;
+        private int[] mFrom;
+        private int[] mTo;
+        private String[] mOriginalFrom;
+
+        private final ScriptureListActivity mParentActivity;
+        //private final List<Scripture> mScriptureValues;
+        private final boolean mTwoPane;
+        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String item_id = String.valueOf(view.getTag());
+
+                if (mTwoPane) {
+                    Bundle arguments = new Bundle();
+                    arguments.putString(ScriptureDetailFragment.ARG_ITEM_ID, item_id);
+                    ScriptureDetailFragment fragment = new ScriptureDetailFragment();
+                    fragment.setArguments(arguments);
+                    mParentActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.scripture_detail_container, fragment)
+                            .commit();
+                } else {
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, ScriptureDetailActivity.class);
+                    intent.putExtra(ScriptureDetailFragment.ARG_ITEM_ID, item_id);
+
+                    context.startActivity(intent);
+                }
+            }
+        };
+
+        public SimpleRecyclerViewAdapter (int layout, Cursor c,
+                                          String[] from,
+                                          int[] to,
+                                          ScriptureListActivity parent,
+                                          //List<Scripture> items,
+                                          boolean twoPane) {
+            super(c);
+            mLayout = layout;
+            mTo = to;
+            mOriginalFrom = from;
+           // mScriptureValues = items;
+            mParentActivity = parent;
+            mTwoPane = twoPane;
+            findColumns(c, from);
+        }
+
+
+
+        /**
+         * Create a map from an array of strings to an array of column-id integers in cursor c.
+         * If c is null, the array will be discarded.
+         *
+         * @param c the cursor to find the columns from
+         * @param from the Strings naming the columns of interest
+         */
+        private void findColumns(Cursor c, String[] from) {
+            if (c != null) {
+                int i;
+                int count = from.length;
+                if (mFrom == null || mFrom.length != count) {
+                    mFrom = new int[count];
+                }
+                for (i = 0; i < count; i++) {
+                    mFrom[i] = c.getColumnIndexOrThrow(from[i]);
+                }
+            } else {
+                mFrom = null;
+            }
+        }
+
+        @Override
+        public Cursor swapCursor(Cursor c) {
+            findColumns(c, mOriginalFrom);
+            return super.swapCursor(c);
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder (ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(mLayout, parent, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder (ViewHolder holder, Cursor cursor) {
+            final int count = mTo.length;
+            final int[] from = mFrom;
+            int position = cursor.getPosition();
+            holder.mIdView.setText(String.valueOf(position+1));
+            holder.mContentView.setText(cursor.getString(from[0]));
+
+            holder.itemView.setTag(cursor.getString(from[1]));
+            holder.itemView.setOnClickListener(mOnClickListener);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCursor.getCount();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView mIdView;
+            final TextView mContentView;
+
+            ViewHolder(View view) {
+                super(view);
+                mIdView = (TextView) view.findViewById(R.id.id_text);
+                mContentView = (TextView) view.findViewById(R.id.content);
+            }
+        }
+    }
+
+
 
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final ScriptureListActivity mParentActivity;
-        //private final List<DummyContent.DummyItem> mValues;
         private final List<Scripture> mScriptureValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -226,4 +356,7 @@ public class ScriptureListActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 }
