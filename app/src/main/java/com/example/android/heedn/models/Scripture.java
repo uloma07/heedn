@@ -1,6 +1,9 @@
 package com.example.android.heedn.models;
 
-public class Scripture {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Scripture implements Parcelable {
 
     long id;
     String reference;
@@ -13,6 +16,21 @@ public class Scripture {
     String text;
     int number_of_reviews;
     int number_of_correct_reviews;
+
+    public Scripture(Parcel in ) {
+        readFromParcel( in );
+    }
+    public Scripture(){}
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Scripture createFromParcel(Parcel in ) {
+            return new Scripture( in );
+        }
+        public Scripture[] newArray(int size) {
+            return new Scripture[size];
+        }
+    };
+
 
     @Override
     public String toString() {
@@ -100,5 +118,33 @@ public class Scripture {
                 && book != null && book.trim() != null
                 && chapter != null && chapter.trim() != null
                 && verse != null && verse.trim() != null;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reference);
+        dest.writeString(translation);
+        dest.writeString(book);
+        dest.writeString(chapter);
+        dest.writeString(verse);
+        dest.writeString(text);
+        dest.writeInt(number_of_reviews);
+        dest.writeInt(number_of_correct_reviews);
+    }
+
+    private void readFromParcel(Parcel in) {
+        reference = in.readString();
+        text = in.readString();
+        translation = in.readString();
+        book = in.readString();
+        chapter = in.readString();
+        verse = in.readString();
+        number_of_reviews = in.readInt();
+        number_of_correct_reviews = in.readInt();
     }
 }

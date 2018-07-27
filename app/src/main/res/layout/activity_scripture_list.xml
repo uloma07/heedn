@@ -51,6 +51,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginTop="48dp"
         android:textColor="@color/white"
+        android:tint="@color/white"
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <android.support.design.widget.FloatingActionButton
@@ -68,6 +69,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_revert"
+        android:tint="@color/white"
+        android:textColor="@color/white"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"
         android:scaleType="center"

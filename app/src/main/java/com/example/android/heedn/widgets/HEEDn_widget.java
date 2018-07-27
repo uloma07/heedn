@@ -23,10 +23,8 @@ public class HEEDn_widget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.heedn_widget);
-
 
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

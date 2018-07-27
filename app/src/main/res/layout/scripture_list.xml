@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:text="No Scriptures added yet"
+        android:text="@string/no_scriptures_added"
         android:textAlignment="center"
         android:gravity="center"
         android:id="@+id/tv_no_scriptures"/>

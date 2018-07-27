@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.renderscript.Script;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +21,12 @@ import android.widget.TextView;
 
 import com.example.android.heedn.data.ScriptureDbHelper;
 import com.example.android.heedn.dummy.Constants;
-import com.example.android.heedn.dummy.DummyContent;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.utils.MyNotificationManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +47,7 @@ public class ScriptureListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
+    public static List<Scripture> SItems = new ArrayList<Scripture>();
     private boolean mTwoPane;
     private ScriptureDbHelper dbHelper;
 
@@ -109,7 +105,7 @@ public class ScriptureListActivity extends AppCompatActivity {
         Scripture [] sitems = dbHelper.getAllScriptures();
         int numberofScriptures = 0;
         if(sitems != null) {
-            DummyContent.SItems = Arrays.asList(sitems);
+            ScriptureListActivity.SItems = Arrays.asList(sitems);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView);
             noScriptures.setVisibility(View.GONE);
@@ -155,8 +151,8 @@ public class ScriptureListActivity extends AppCompatActivity {
     }
 
         private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-            Log.v("HEEDn Content", String.valueOf(DummyContent.SItems.size()));
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, DummyContent.SItems, mTwoPane));
+            Log.v("HEEDn Content", String.valueOf(ScriptureListActivity.SItems.size()));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ScriptureListActivity.SItems, mTwoPane));
     }
 
     public static class SimpleItemRecyclerViewAdapter
@@ -169,7 +165,6 @@ public class ScriptureListActivity extends AppCompatActivity {
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
 
                 String item_id = String.valueOf(view.getTag());
 

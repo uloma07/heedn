@@ -20,6 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_text_holder"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="20dp"
             android:textAlignment="center"/>
@@ -30,7 +32,7 @@
             android:id="@+id/btn_reveal_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View text"
+            android:text="@string/view"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/search_view_inset"/>
 
@@ -42,7 +44,7 @@
            android:textStyle="italic"
            android:textSize="12sp"
            android:layout_margin="@dimen/search_view_inset"
-           android:textColor="@color/ltgray"
+           android:textColor="@color/dark_gray"
            />
 
     </android.support.v7.widget.CardView>

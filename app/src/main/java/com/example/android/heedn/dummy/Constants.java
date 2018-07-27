@@ -8,4 +8,7 @@ public class Constants {
 
     public static final String FIRSTTIMEKEY = "firsttime";
     public static final String COUNT = "count";
+
+    public static final String ADDEDSCRIPTURE = "added_scripture";
+    public static final String SCRIPTURESTOREVIEW = "review_scripture";
 }

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.heedn.data.ScriptureDbHelper;
-import com.example.android.heedn.dummy.DummyContent;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.widgets.HEEDn_widget;
 
@@ -37,9 +36,8 @@ public class ScriptureDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
 
     private Scripture scripture;
     private ScriptureDbHelper dbHelper;
@@ -57,32 +55,17 @@ public class ScriptureDetailFragment extends Fragment {
         dbHelper = new ScriptureDbHelper(this.getContext());
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            //mItem = DummyContent.ITEM_MAP.get();
+            // Load the content specified by the fragment arguments.
 
             scripture = dbHelper.retrieveScripture(Integer.parseInt(getArguments().getString(ARG_ITEM_ID)));
-
-            Log.v("HEEDn Scripture", scripture.toString());
 
             final Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null && scripture != null) {
                 appBarLayout.setTitle(scripture.getReference());
             }
-
-
         }
     }
-
-//    public void Deleted(View view){
-//        boolean res = new ScriptureDbHelper(this).delete(Integer.parseInt(getIntent().getStringExtra(ScriptureDetailFragment.ARG_ITEM_ID)));
-//        if(res){
-//            Intent homeIntent = new Intent(this,ScriptureListActivity.class);
-//            this.startActivity(homeIntent);
-//        }
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,6 +75,7 @@ public class ScriptureDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (scripture != null) {
             ((TextView) rootView.findViewById(R.id.scripture_detail)).setText(scripture.getText());
+            ((TextView) rootView.findViewById(R.id.tv_reviews)).setText(scripture.getReviewsString());
             final Context c = rootView.getContext();
 
             rootView.findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {

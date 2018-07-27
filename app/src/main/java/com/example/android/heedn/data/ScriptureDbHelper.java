@@ -26,7 +26,7 @@ public class ScriptureDbHelper extends SQLiteOpenHelper {
     public long addNewScripture(Scripture scripture) {
 
         //check if item exists
-        if( scripture.getId() > 0) return -1;
+        if( getScripturebyreference(scripture.getReference())) return -1;
         ContentValues cv = new ContentValues();
         cv.put(ScriptureContract.ScriptureEntry.REFERENCE, scripture.getReference());
         cv.put(ScriptureContract.ScriptureEntry.TEXT, scripture.getText());
@@ -47,6 +47,15 @@ public class ScriptureDbHelper extends SQLiteOpenHelper {
 
     private boolean getScripture(long id) {
         Cursor cursor = mDb.rawQuery("select * from " + ScriptureContract.ScriptureEntry.TABLE_NAME + " where " + ScriptureContract.ScriptureEntry._ID + "='" + String.valueOf(id) + "'" , null);
+        if (cursor != null && cursor.getCount()> 0) {
+            cursor.close();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean getScripturebyreference(String ref) {
+        Cursor cursor = mDb.rawQuery("select * from " + ScriptureContract.ScriptureEntry.TABLE_NAME + " where " + ScriptureContract.ScriptureEntry.REFERENCE + "='" + ref+ "'" , null);
         if (cursor != null && cursor.getCount()> 0) {
             cursor.close();
             return true;

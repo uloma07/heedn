@@ -25,7 +25,9 @@ import com.example.android.heedn.widgets.HEEDn_widget;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
+import static com.example.android.heedn.dummy.Constants.ADDEDSCRIPTURE;
 import static com.example.android.heedn.dummy.Constants.COUNT;
 
 public class AddScriptureActivity extends AppCompatActivity {
@@ -52,6 +54,17 @@ public class AddScriptureActivity extends AppCompatActivity {
         mSearch = (Button) findViewById(R.id.btn_search);
         mAdd = (Button) findViewById(R.id.btn_add);
 
+
+        if(savedInstanceState!= null && savedInstanceState.getParcelable(ADDEDSCRIPTURE) != null ){
+            scripturetext = savedInstanceState.getParcelable(ADDEDSCRIPTURE);
+            if(scripturetext.getText() != null && !scripturetext.getText().isEmpty()) {
+                mScriptureText.setText(scripturetext.getText());
+                mSearch.setVisibility(View.GONE);
+                mAdd.setVisibility(View.VISIBLE);
+            }
+        }
+
+
         mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener(){
             @Override
             public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
@@ -65,7 +78,23 @@ public class AddScriptureActivity extends AppCompatActivity {
 
         });
 
+        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+                mScriptureText.setText(getResources().getString(R.string.no_scripture_found));
+                mSearch.setVisibility(View.VISIBLE);
+                mAdd.setVisibility(View.GONE);
+                scripturetext = null;
+            }
+        });
 
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ADDEDSCRIPTURE,scripturetext);
     }
 
     public void Search(){
@@ -76,31 +105,33 @@ public class AddScriptureActivity extends AppCompatActivity {
 
         String currentQuery = mSearchView.getQuery().trim();
 
-        String[] ref_items = currentQuery.split(" ");
-        if(ref_items.length>1){
-            scripturetext = new Scripture();
-            scripturetext.setBook(ref_items[0]);
+        String[] temp = currentQuery.split(":");
 
-            if(ref_items.length == 2){
-                String temp = ref_items[1];
-                String[] nested_ref = temp.split(":");
-
-                if(nested_ref.length == 1){
-                    Log.v("HEEDn", "scripture is chapter");
-                    ShowSnackbar("Sorry, we do not offer chapter memorisation.");
-                    return;
-                }
-
-                if(nested_ref.length > 1){
-                    scripturetext.setChapter(nested_ref[0]);
-                    scripturetext.setVerse(nested_ref[1]);
-                }
-            }
-            else if(ref_items.length == 3){
-                scripturetext.setChapter(ref_items[1]);
-                scripturetext.setVerse(ref_items[2]);
-            }
+        if(temp.length != 2){
+            Log.v("HEEDn", "scripture is not valid");
+            ShowSnackbar("Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1");
+            return;
         }
+        scripturetext = new Scripture();
+        scripturetext.setVerse(temp[1].trim());
+
+        temp = temp[0].split(" ");
+
+        if(temp.length < 2){
+            Log.v("HEEDn", "scripture is not valid");
+            ShowSnackbar("Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1");
+            return;
+        }
+
+        scripturetext.setChapter(temp[temp.length-1].trim());
+
+        String[] bookarr = Arrays.copyOfRange(temp,0, temp.length-1);
+        String bookname = "";
+        for(String s: bookarr ){
+            bookname += (s.trim()+" ");
+        }
+
+        scripturetext.setBook(bookname.trim());
 
         if (scripturetext.isValidScripture()){
             Log.v("HEEDn", "scripture is valid");
@@ -146,6 +177,10 @@ public class AddScriptureActivity extends AppCompatActivity {
             doWidgetUpdate();
             Intent homeIntent = new Intent(this,ScriptureListActivity.class);
             this.startActivity(homeIntent);
+        }
+        else{
+            Log.v("HEEDn", "Sorry, you have previously added this scripture");
+            ShowSnackbar("Sorry, you have previously added this scripture");
         }
     }
 

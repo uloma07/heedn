@@ -24,25 +24,37 @@ android:background="@android:color/darker_gray">
             android:layout_gravity="center"
             android:padding="@dimen/square_button_padding"
             android:onClick="finish"
+            android:visibility="visible"
             />
+
+        <Button
+            android:id="@+id/btn_addScriptures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_new_scriptures"
+            android:background="@color/colorAccent"
+            android:layout_gravity="center"
+            android:padding="@dimen/square_button_padding"
+            android:visibility="gone"
+            android:onClick="addscripture"
+            />
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_gravity="bottom"
-            android:gravity="center"
+            android:gravity="bottom"
             android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/rejectBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@android:drawable/ic_menu_close_clear_cancel"/>
-            <ImageButton
-                android:id="@+id/acceptBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="30dp"
-                android:background="@android:drawable/ic_menu_save"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/review_notice"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                android:layout_margin="4dp"
+                android:id="@+id/tv_msg"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
     </FrameLayout>
@@ -56,14 +68,3 @@ android:background="@android:color/darker_gray">
 
 
 </FrameLayout>
-
-    <!--<?xml version="1.0" encoding="utf-8"?>-->
-    <!--<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--tools:context=".ReviewScriptureActivity">-->
-
-
-    <!--</android.support.constraint.ConstraintLayout>-->

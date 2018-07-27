@@ -7,4 +7,10 @@
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="appwidget_text">HEEDn</string>
     <string name="add_widget">Add HEEDn widget</string>
+    <string name="search_scriptures">Search scriptures</string>
+    <string name="review_notice">Use the back button to abort. Your review will not be saved.</string>
+    <string name="add_new_scriptures">Add Scriptures</string>
+    <string name="delete">Delete</string>
+    <string name="view">View text</string>
+    <string name="no_scriptures_added">No Scriptures added yet</string>
 </resources>
