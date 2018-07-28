@@ -38,7 +38,7 @@ public class HEEDn_widget extends AppWidgetProvider {
 
         views.setOnClickPendingIntent(R.id.appwidget_text,pendingIntent);
 
-        views.setTextViewText(R.id.appwidget_text, "You have "+ numberofScriptures + " HEEDn scriptures to review");
+        views.setTextViewText(R.id.appwidget_text, context.getResources().getString(R.string.number_of_review_scriptures, numberofScriptures));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
