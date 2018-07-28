@@ -30,9 +30,6 @@ public class ScriptureCard {
     @View(R.id.btn_reveal_toggle)
     public Button RevealBtn;
 
-    static String SHOWTEXT = "View text";
-    static String HIDETEXT = "Hide text";
-
 
     private Scripture mScripture;
     private Context mContext;
@@ -49,20 +46,21 @@ public class ScriptureCard {
     public void onResolved(){
         ScriptTxt.setText(mScripture.getReference());
         ReviewsTxt.setText(mScripture.getReviewsString());
-        RevealBtn.setText(SHOWTEXT);
+        RevealBtn.setText(mContext.getResources().getString(R.string.show_text));
         RevealBtn.setOnClickListener(new android.view.View.OnClickListener() {
 
             @Override
             public void onClick(android.view.View v) {
-                if(RevealBtn.getText() == SHOWTEXT){
+
+                if(RevealBtn.getText() == mContext.getResources().getString(R.string.show_text)){
                     //show the text and switch button text
                     ScriptTxt.setText(mScripture.getText());
-                    RevealBtn.setText(HIDETEXT);
+                    RevealBtn.setText(mContext.getResources().getString(R.string.hide_text));
                 }
                 else{
                     //show reference and switch button text
                     ScriptTxt.setText(mScripture.getReference());
-                    RevealBtn.setText(SHOWTEXT);
+                    RevealBtn.setText(mContext.getResources().getString(R.string.show_text));
                 }
             }
 

@@ -32,7 +32,7 @@ public class ScriptureDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Want to share your faith? COMING SOON!!", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, getResources().getString(R.string.share_your_faith), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

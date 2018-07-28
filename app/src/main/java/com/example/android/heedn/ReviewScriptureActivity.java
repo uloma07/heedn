@@ -62,27 +62,13 @@ public class ReviewScriptureActivity extends AppCompatActivity {
         if(scriptures == null || scriptures.length == 0) {
             findViewById(R.id.btn_endReview).setVisibility(View.GONE);
             findViewById(R.id.btn_addScriptures).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.tv_msg)).setText("You nave no scriptures. Click the button above to add one.");
+            ((TextView)findViewById(R.id.tv_msg)).setText(getResources().getString(R.string.you_have_no_scripture));
         }
         else {
             for (Scripture scripture : scriptures) {
                 mSwipeView.addView(new ScriptureCard(mContext, scripture, mSwipeView));
             }
         }
-
-//      findViewById(R.id.abortBtn).setOnClickListener(new View.OnClickListener() {
-//          @Override
-//        public void onClick(View v) {
-//              EndReview();
-//          }
-//      });
-//
-//        findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mSwipeView.doSwipe(true);
-//            }
-//        });
 
     }
 

@@ -13,4 +13,15 @@
     <string name="delete">Delete</string>
     <string name="view">View text</string>
     <string name="no_scriptures_added">No Scriptures added yet</string>
+    <string name="welcome">Welcome</string>
+    <string name="welcome_msg">How many scriptures have you HEEDn in your heart?</string>
+    <string name="finish">Finish Review</string>
+    <string name="you_have_no_scripture">You nave no scriptures. Click the button above to add one.</string>
+    <string name="internet">Please check internet connection</string>
+    <string name="invalid_scripture_search_format">Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1</string>
+    <string name="previously_added_scripture">Sorry, you have previously added this scripture</string>
+    <string name="scripture_not_found">This Scripture was not found! Please check reference and retry.</string>
+    <string name="show_text">View text</string>
+    <string name="hide_text">Hide text</string>
+    <string name="share_your_faith">Want to share your faith? COMING SOON!!</string>
 </resources>

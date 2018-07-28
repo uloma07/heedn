@@ -64,7 +64,6 @@ public class AddScriptureActivity extends AppCompatActivity {
             }
         }
 
-
         mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener(){
             @Override
             public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
@@ -100,7 +99,7 @@ public class AddScriptureActivity extends AppCompatActivity {
     public void Search(){
         if(!NetworkUtils.isConnectedToInternet(mConstraintLayout.getContext())){
             Log.v("HEEDn", "no internet");
-            ShowSnackbar("Please check internet connection");
+            ShowSnackbar(getResources().getString(R.string.internet));
         }
 
         String currentQuery = mSearchView.getQuery().trim();
@@ -109,7 +108,7 @@ public class AddScriptureActivity extends AppCompatActivity {
 
         if(temp.length != 2){
             Log.v("HEEDn", "scripture is not valid");
-            ShowSnackbar("Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1");
+            ShowSnackbar(getResources().getString(R.string.invalid_scripture_search_format));
             return;
         }
         scripturetext = new Scripture();
@@ -119,7 +118,7 @@ public class AddScriptureActivity extends AppCompatActivity {
 
         if(temp.length < 2){
             Log.v("HEEDn", "scripture is not valid");
-            ShowSnackbar("Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1");
+            ShowSnackbar(getResources().getString(R.string.invalid_scripture_search_format));
             return;
         }
 
@@ -140,7 +139,7 @@ public class AddScriptureActivity extends AppCompatActivity {
         }
         else{
             Log.v("HEEDn", "scripture is not valid");
-            ShowSnackbar("Sorry, the scripture you have entered is not in the correct format. Please use book chapter:verse format. For example, James 1:1");
+            ShowSnackbar(getResources().getString(R.string.invalid_scripture_search_format));
             return;
         }
 
@@ -166,13 +165,13 @@ public class AddScriptureActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = prefs.edit();
                 int numberofScriptures = prefs.getInt(COUNT, 0);
                 editor.putInt(COUNT, numberofScriptures+1);
-                editor.commit();
+                editor.apply();
             }
             else{
 
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putInt(COUNT, 1);
-                editor.commit();
+                editor.apply();
             }
             doWidgetUpdate();
             Intent homeIntent = new Intent(this,ScriptureListActivity.class);
@@ -180,7 +179,7 @@ public class AddScriptureActivity extends AppCompatActivity {
         }
         else{
             Log.v("HEEDn", "Sorry, you have previously added this scripture");
-            ShowSnackbar("Sorry, you have previously added this scripture");
+            ShowSnackbar(getResources().getString(R.string.previously_added_scripture));
         }
     }
 
@@ -211,7 +210,7 @@ public class AddScriptureActivity extends AppCompatActivity {
                 }
             }
             else{
-                ShowSnackbar("This Scripture was not found! Please check reference and retry.");
+                ShowSnackbar(getResources().getString(R.string.scripture_not_found));
             }
         }
     }

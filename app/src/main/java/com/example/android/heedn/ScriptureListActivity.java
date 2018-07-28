@@ -113,7 +113,6 @@ public class ScriptureListActivity extends AppCompatActivity {
         Cursor sitems = dbHelper.getAllScripturesCursor();
         int numberofScriptures = 0;
         if(sitems != null) {
-            //ScriptureListActivity.SItems = Arrays.asList(sitems);
             assert recyclerView != null;
             setupRecyclerView((RecyclerView) recyclerView,sitems,uiBindFrom,uiBindTo);
             noScriptures.setVisibility(View.GONE);
@@ -146,26 +145,22 @@ public class ScriptureListActivity extends AppCompatActivity {
             /*
              * Displaying a notification locally
              */
-            MyNotificationManager.getInstance(this).displayNotification("Welcome", "How many scriptures have you HEEDn in your heart?");
-
+            MyNotificationManager
+                    .getInstance(this)
+                    .displayNotification(getResources().getString(R.string.welcome), getResources().getString(R.string.welcome_msg));
+//
             // run your one time code
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(FIRSTTIMEKEY, true);
             editor.putInt(COUNT, numberofScriptures);
             editor.commit();
         }
-
-
     }
 
-        private void setupRecyclerView(@NonNull RecyclerView recyclerView, Cursor c, String[] from, int[] to ) {
-            Log.v("HEEDn Content", String.valueOf(ScriptureListActivity.SItems.size()));
-            recyclerView.setAdapter(new SimpleRecyclerViewAdapter(R.layout.scripture_list_content, c, from, to, this,mTwoPane));
-            //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, ScriptureListActivity.SItems, mTwoPane));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, Cursor c, String[] from, int[] to ) {
+        Log.v("HEEDn Content Count", String.valueOf(c.getCount()));
+        recyclerView.setAdapter(new SimpleRecyclerViewAdapter(R.layout.scripture_list_content, c, from, to, this,mTwoPane));
     }
-
-
-
 
     public static class SimpleRecyclerViewAdapter
             extends CursorRecyclerAdapter<SimpleRecyclerViewAdapter.ViewHolder> {
@@ -176,7 +171,6 @@ public class ScriptureListActivity extends AppCompatActivity {
         private String[] mOriginalFrom;
 
         private final ScriptureListActivity mParentActivity;
-        //private final List<Scripture> mScriptureValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -206,19 +200,15 @@ public class ScriptureListActivity extends AppCompatActivity {
                                           String[] from,
                                           int[] to,
                                           ScriptureListActivity parent,
-                                          //List<Scripture> items,
                                           boolean twoPane) {
             super(c);
             mLayout = layout;
             mTo = to;
             mOriginalFrom = from;
-           // mScriptureValues = items;
             mParentActivity = parent;
             mTwoPane = twoPane;
             findColumns(c, from);
         }
-
-
 
         /**
          * Create a map from an array of strings to an array of column-id integers in cursor c.
@@ -283,80 +273,4 @@ public class ScriptureListActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final ScriptureListActivity mParentActivity;
-        private final List<Scripture> mScriptureValues;
-        private final boolean mTwoPane;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String item_id = String.valueOf(view.getTag());
-
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putString(ScriptureDetailFragment.ARG_ITEM_ID, item_id);
-                    ScriptureDetailFragment fragment = new ScriptureDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.scripture_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ScriptureDetailActivity.class);
-                    intent.putExtra(ScriptureDetailFragment.ARG_ITEM_ID, item_id);
-
-                    context.startActivity(intent);
-                }
-            }
-        };
-
-        SimpleItemRecyclerViewAdapter(ScriptureListActivity parent,
-                                      List<Scripture> items,
-                                      boolean twoPane) {
-            mScriptureValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.scripture_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(String.valueOf(position+1));
-            holder.mContentView.setText(mScriptureValues.get(position).toString());
-
-            holder.itemView.setTag(mScriptureValues.get(position).getId());
-            holder.itemView.setOnClickListener(mOnClickListener);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mScriptureValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-        }
-    }
-
-
-
 }
