@@ -1,7 +1,9 @@
 package com.example.android.heedn;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.android.heedn.data.ScriptureDbHelper;
+// import com.example.android.heedn.data.ScriptureDbHelper;
+import com.example.android.heedn.data.ScriptureContract;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.utils.ScriptureCard;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -22,7 +25,7 @@ import static com.example.android.heedn.dummy.Constants.SCRIPTURESTOREVIEW;
 
 public class ReviewScriptureActivity extends AppCompatActivity {
 
-    ScriptureDbHelper dbHelper;
+    // ScriptureDbHelper dbHelper;
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
     public Button EndReviewBtn;
@@ -45,8 +48,13 @@ public class ReviewScriptureActivity extends AppCompatActivity {
 
         }
         else{
-            dbHelper = new ScriptureDbHelper(this);
-            scriptures = dbHelper.getAllScriptures();
+            Cursor mCursor = getContentResolver().query(
+                    ScriptureContract.ScriptureEntry.CONTENT_URI,
+                    ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
+                    null,
+                    null,
+                    null);
+            scriptures = ScriptureContract.ScriptureEntry.readFromCursor(mCursor);
         }
 
         mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
@@ -81,9 +89,23 @@ public class ReviewScriptureActivity extends AppCompatActivity {
         this.startActivity(addIntent);
     }
 
-    public void EndReview(){
+    public void EndReview() {
         Log.v("HEEDn count test", String.valueOf(scriptures[0].getNumber_of_reviews()));
-        if(dbHelper.updateScriptures(scriptures)) {
+        ContentValues[] scriptureContents = new ContentValues[scriptures.length];
+
+        boolean completed = true;
+
+        for(int i=0; i<scriptureContents.length; i++) {
+            scriptureContents[i] = scriptures[i].getContentValues();
+
+            completed = completed && getContentResolver().update(ScriptureContract.ScriptureEntry.CONTENT_ID_URI_BASE,
+                    scriptureContents[i],
+                    ScriptureContract.ScriptureEntry._ID+"=?",
+                    new String[] {String.valueOf(scriptures[i].getId())}) > 0;
+        }
+
+
+        if(completed) {
             Intent homeIntent = new Intent(this, ScriptureListActivity.class);
             this.startActivity(homeIntent);
         }

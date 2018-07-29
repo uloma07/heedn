@@ -1,7 +1,13 @@
 package com.example.android.heedn.models;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.android.heedn.data.ScriptureContract;
+
+import java.util.Dictionary;
+import java.util.HashMap;
 
 public class Scripture implements Parcelable {
 
@@ -146,5 +152,23 @@ public class Scripture implements Parcelable {
         verse = in.readString();
         number_of_reviews = in.readInt();
         number_of_correct_reviews = in.readInt();
+    }
+
+    public ContentValues getContentValues() {
+        ContentValues result = new ContentValues();
+        Long theId = null;
+        if(this.getId()>0) {
+            theId = this.getId();
+        }
+        result.put(ScriptureContract.ScriptureEntry._ID, theId);
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_VERSE, this.getVerse());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_TRANSLATION, this.getTranslation());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_TEXT, this.getText());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_REFERENCE, this.getReference());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_NUMBEROFREVIEWS, this.getNumber_of_reviews());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_NUMBEROFCORRECTREVIEWS, this.getNumber_of_correct_reviews());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_CHAPTER, this.getChapter());
+        result.put(ScriptureContract.ScriptureEntry.COLUMN_BOOK, this.getBook());
+        return  result;
     }
 }

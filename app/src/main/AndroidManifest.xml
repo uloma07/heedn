@@ -54,6 +54,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/heedn_widget_info" />
         </receiver>
+        <provider android:name="com.example.android.heedn.data.HeednContentProvider"
+            android:authorities="com.example.android.heedn.data.ScriptureContract"
+            android:exported="false"/>
     </application>
 
 </manifest>

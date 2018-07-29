@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
-import com.example.android.heedn.data.ScriptureDbHelper;
+import com.example.android.heedn.data.ScriptureContract;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.utils.JSONUtils;
 import com.example.android.heedn.utils.NetworkUtils;
@@ -39,14 +40,11 @@ public class AddScriptureActivity extends AppCompatActivity {
 
     Scripture scripturetext;
 
-    ScriptureDbHelper dbHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_scripture);
 
-        dbHelper = new ScriptureDbHelper(this);
 
         mSearchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
         mConstraintLayout = (ConstraintLayout) findViewById(R.id.add_scripture_contraint_layout);
@@ -156,8 +154,8 @@ public class AddScriptureActivity extends AppCompatActivity {
     }
 
     public void Add(View view) {
-        long id = dbHelper.addNewScripture(scripturetext);
-        if(id> 0){
+        Uri id = getContentResolver().insert(ScriptureContract.ScriptureEntry.CONTENT_URI, scripturetext.getContentValues());
+        if(id != Uri.EMPTY){
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if(prefs.contains(COUNT)) {

@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.heedn.data.ScriptureDbHelper;
+import com.example.android.heedn.data.ScriptureContract;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.widgets.HEEDn_widget;
 
@@ -40,7 +41,7 @@ public class ScriptureDetailFragment extends Fragment {
      */
 
     private Scripture scripture;
-    private ScriptureDbHelper dbHelper;
+    // private ScriptureDbHelper dbHelper;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -52,12 +53,22 @@ public class ScriptureDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHelper = new ScriptureDbHelper(this.getContext());
+        // dbHelper = new ScriptureDbHelper(this.getContext());
+
+        String[] selectionArgs = new String[1];
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the content specified by the fragment arguments.
-
-            scripture = dbHelper.retrieveScripture(Integer.parseInt(getArguments().getString(ARG_ITEM_ID)));
+            selectionArgs[0] = ""+getArguments().getString(ARG_ITEM_ID);
+            Log.v("JOHN", selectionArgs.toString());
+            Cursor sitems = getContext().getContentResolver().query(
+                    ScriptureContract.ScriptureEntry.CONTENT_URI,
+                    ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
+                    ScriptureContract.ScriptureEntry._ID+"=?",
+                    selectionArgs,
+                    null);
+            Log.v("JOHN", sitems.toString());
+            scripture = ScriptureContract.ScriptureEntry.readFromCursor(sitems)[0];
 
             final Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -81,7 +92,11 @@ public class ScriptureDetailFragment extends Fragment {
             rootView.findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean res = new ScriptureDbHelper(c).delete(Integer.parseInt(getArguments().getString(ARG_ITEM_ID)));
+                    boolean res = (getContext().getContentResolver().delete(
+                            ScriptureContract.ScriptureEntry.CONTENT_URI,
+                            ScriptureContract.ScriptureEntry._ID+"=?",
+                            new String[] {"" + getArguments().getString(ARG_ITEM_ID)}
+                    )) > 0;
                     if(res){
 
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);

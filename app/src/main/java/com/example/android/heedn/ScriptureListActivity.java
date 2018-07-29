@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.heedn.data.ScriptureContract;
-import com.example.android.heedn.data.ScriptureDbHelper;
 import com.example.android.heedn.dummy.Constants;
 import com.example.android.heedn.models.Scripture;
 import com.example.android.heedn.utils.CursorRecyclerAdapter;
@@ -52,14 +51,13 @@ public class ScriptureListActivity extends AppCompatActivity {
      */
     public static List<Scripture> SItems = new ArrayList<Scripture>();
     private boolean mTwoPane;
-    private ScriptureDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scripture_list);
 
-        String[] uiBindFrom = { ScriptureContract.ScriptureEntry.REFERENCE,
+        String[] uiBindFrom = { ScriptureContract.ScriptureEntry.COLUMN_REFERENCE,
                 ScriptureContract.ScriptureEntry._ID };
         // View IDs which will have the respective column data inserted
         int[] uiBindTo = { R.id.content, R.id.id_text };
@@ -109,8 +107,12 @@ public class ScriptureListActivity extends AppCompatActivity {
         TextView noScriptures = (TextView) findViewById(R.id.tv_no_scriptures);
         View recyclerView = findViewById(R.id.scripture_list);
 
-        dbHelper = new ScriptureDbHelper(this);
-        Cursor sitems = dbHelper.getAllScripturesCursor();
+        Cursor sitems = getContentResolver().query(
+                ScriptureContract.ScriptureEntry.CONTENT_URI,
+                ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
+                null,
+                null,
+                null);
         int numberofScriptures = 0;
         if(sitems != null) {
             assert recyclerView != null;
