@@ -32,14 +32,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/view"
-            android:layout_gravity="bottom|right"
+            android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/search_view_inset"/>
 
        <TextView
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:id="@+id/tv_reviews_holder"
-           android:layout_gravity="top|left"
+           android:layout_gravity="top|start"
            android:textStyle="italic"
            android:textSize="12sp"
            android:layout_margin="@dimen/search_view_inset"

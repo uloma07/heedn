@@ -52,7 +52,8 @@
         android:layout_marginTop="48dp"
         android:textColor="@color/white"
         android:tint="@color/white"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="@string/Add"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_invisible"
@@ -62,7 +63,8 @@
         android:layout_margin="@dimen/fab_margin"
         android:visibility="invisible"
         app:layout_anchor="@id/fab"
-        app:layout_anchorGravity="top" />
+        app:layout_anchorGravity="top"
+        android:contentDescription="@string/hidden"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/review"
@@ -77,6 +79,7 @@
         android:layout_gravity="top|end"
         app:layout_anchor="@+id/fab_invisible"
         app:layout_anchorGravity="top"
-        android:layout_margin="@dimen/fab_margin" />
+        android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/review"/>
 
 </android.support.design.widget.CoordinatorLayout>
