@@ -10,6 +10,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +38,7 @@ import java.util.List;
 
 import static com.example.android.heedn.dummy.Constants.COUNT;
 import static com.example.android.heedn.dummy.Constants.FIRSTTIMEKEY;
+import static com.example.android.heedn.dummy.Constants.ID_HIDDEN_LOADER;
 
 /**
  * An activity representing a list of Scriptures. This activity
@@ -43,7 +48,8 @@ import static com.example.android.heedn.dummy.Constants.FIRSTTIMEKEY;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ScriptureListActivity extends AppCompatActivity {
+public class ScriptureListActivity extends  AppCompatActivity
+                                        implements  LoaderManager.LoaderCallbacks<Cursor>{
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -51,6 +57,11 @@ public class ScriptureListActivity extends AppCompatActivity {
      */
     public static List<Scripture> SItems = new ArrayList<Scripture>();
     private boolean mTwoPane;
+    private CursorRecyclerAdapter mCusorAdapter;
+    private int mPosition = RecyclerView.NO_POSITION;
+    private RecyclerView recyclerView;
+    private TextView noScriptures;
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,29 +115,16 @@ public class ScriptureListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        TextView noScriptures = (TextView) findViewById(R.id.tv_no_scriptures);
-        View recyclerView = findViewById(R.id.scripture_list);
-
-        Cursor sitems = getContentResolver().query(
+        noScriptures = (TextView) findViewById(R.id.tv_no_scriptures);
+        recyclerView = (RecyclerView)findViewById(R.id.scripture_list);
+        mCursor = getContentResolver().query(
                 ScriptureContract.ScriptureEntry.CONTENT_URI,
                 ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
                 null,
                 null,
                 null);
-        int numberofScriptures = 0;
-        if(sitems != null) {
-            assert recyclerView != null;
-            setupRecyclerView((RecyclerView) recyclerView,sitems,uiBindFrom,uiBindTo);
-            noScriptures.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-            numberofScriptures = sitems.getCount();
-        }
-        else{
-            noScriptures.setVisibility(View.VISIBLE);
-            assert recyclerView != null;
-            recyclerView.setVisibility(View.GONE);
-        }
 
+        setupRecyclerView((RecyclerView) recyclerView, mCursor, uiBindFrom, uiBindTo);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if(!prefs.getBoolean(FIRSTTIMEKEY, false)) {
@@ -154,15 +152,71 @@ public class ScriptureListActivity extends AppCompatActivity {
             // run your one time code
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(FIRSTTIMEKEY, true);
-            editor.putInt(COUNT, numberofScriptures);
+            editor.putInt(COUNT, mCursor.getCount());
             editor.commit();
         }
+
+        getSupportLoaderManager().initLoader(ID_HIDDEN_LOADER, null, this);
+
+
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, Cursor c, String[] from, int[] to ) {
+
         Log.v("HEEDn Content Count", String.valueOf(c.getCount()));
-        recyclerView.setAdapter(new SimpleRecyclerViewAdapter(R.layout.scripture_list_content, c, from, to, this,mTwoPane));
+        if (mCusorAdapter == null) {
+            mCusorAdapter = new SimpleRecyclerViewAdapter(R.layout.scripture_list_content, c, from, to, this,mTwoPane);
+        }
+        recyclerView.setAdapter(mCusorAdapter);
+
+
     }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, @Nullable Bundle args) {
+        switch (loaderId) {
+            case ID_HIDDEN_LOADER:
+                return new CursorLoader(this,
+                        ScriptureContract.ScriptureEntry.CONTENT_URI,
+                        ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
+                        null,
+                        null,
+                        ScriptureContract.ScriptureEntry.DEFAULT_SORT_ORDER);
+            default:
+                throw new RuntimeException("Hidden Loader Not Implemented: " + loaderId);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        Log.v("HEEDn Onload Finished", "1");
+
+        mCusorAdapter.swapCursor(data);
+//      COMPLETED (29) If mPosition equals RecyclerView.NO_POSITION, set it to 0
+        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+//      COMPLETED (30) Smooth scroll the RecyclerView to mPosition
+        recyclerView.smoothScrollToPosition(mPosition);
+
+//      COMPLETED (31) If the Cursor's size is not equal to 0, call showWeatherDataView
+        if(data != null) {
+            assert recyclerView != null;
+            noScriptures.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+        else{
+            noScriptures.setVisibility(View.VISIBLE);
+            assert recyclerView != null;
+            recyclerView.setVisibility(View.GONE);
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        mCusorAdapter.swapCursor(null);
+    }
+
 
     public static class SimpleRecyclerViewAdapter
             extends CursorRecyclerAdapter<SimpleRecyclerViewAdapter.ViewHolder> {

@@ -22,6 +22,8 @@ public class Constants {
     private static final int SCRIPTURE = 1;
     private static final int SCRIPTURE_ID = 2;
 
+    public static final int ID_HIDDEN_LOADER = 440;
+
     private static final UriMatcher sUriMatcher;
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);

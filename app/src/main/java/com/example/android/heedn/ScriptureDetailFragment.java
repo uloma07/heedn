@@ -29,12 +29,14 @@ import static com.example.android.heedn.dummy.Constants.COUNT;
  * in two-pane mode (on tablets) or a {@link ScriptureDetailActivity}
  * on handsets.
  */
-public class ScriptureDetailFragment extends Fragment {
+public class ScriptureDetailFragment extends Fragment  {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
+    public Cursor cursor;
+
 
     /**
      * The content this fragment is presenting.
@@ -50,25 +52,18 @@ public class ScriptureDetailFragment extends Fragment {
     public ScriptureDetailFragment() {
     }
 
+    public void setMyCursor(Cursor _cursor) {
+        this.cursor = _cursor;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // dbHelper = new ScriptureDbHelper(this.getContext());
-
-        String[] selectionArgs = new String[1];
+        String[] selectionArgs = new String[] {""+getArguments().getString(ARG_ITEM_ID)};
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the content specified by the fragment arguments.
-            selectionArgs[0] = ""+getArguments().getString(ARG_ITEM_ID);
-            Log.v("JOHN", selectionArgs.toString());
-            Cursor sitems = getContext().getContentResolver().query(
-                    ScriptureContract.ScriptureEntry.CONTENT_URI,
-                    ScriptureContract.ScriptureEntry.DEFAULT_PROJECTION,
-                    ScriptureContract.ScriptureEntry._ID+"=?",
-                    selectionArgs,
-                    null);
-            Log.v("JOHN", sitems.toString());
-            scripture = ScriptureContract.ScriptureEntry.readFromCursor(sitems)[0];
+            scripture = ScriptureContract.ScriptureEntry.readFromCursor(cursor)[0];
 
             final Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
