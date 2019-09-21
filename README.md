@@ -10,8 +10,8 @@ git clone https://github.com/uloma07/heedn.git
 
 ### Prerequisites
 
-Android Studio
-Espresso
+- Android Studio
+- Espresso
 
 
 ## Build variants
